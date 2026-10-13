@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Product Catalog</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css"></head><body>
+<header id="topbar" hidden><div class="wrap bar">
+  <div class="brand"><span class="logo">▣</span> Catalog<span class="muted">Pro</span></div>
+  <nav><button class="tab active" data-view="catalog">Catalog</button><button class="tab" data-view="orders">My Orders</button><button class="tab" data-view="admin" id="adminTab" hidden>Admin</button></nav>
+  <div class="user"><button class="btn cartbtn" id="cartBtn">🛒 Cart <span id="cartCount" class="count">0</span></button><span id="userChip" class="chip"></span><button class="btn ghost" id="logoutBtn">Sign out</button></div></div></header>
+
+<main class="wrap">
+<section id="auth" class="auth card"><h1>Welcome</h1><p class="muted">Sign in to browse the catalog.</p>
+  <label>Username<input id="au" autocomplete="username"></label>
+  <label>Password<input id="ap" type="password" placeholder="At least 6 characters" autocomplete="current-password"></label>
+  <div class="row"><button class="btn primary grow" id="loginBtn">Sign in</button><button class="btn" id="regBtn">Create account</button></div></section>
+
+<section id="catalog" hidden>
+  <div class="hero"><div><h1>Discover quality products</h1><p>Browse the catalog, add items to your cart and check out in seconds.</p></div>
+    <div class="trust"><span>🚚 Free shipping over ₹999</span><span>🔒 Secure payments</span><span>↩ Easy returns</span></div></div>
+  <div class="toolbar card">
+    <input id="q" placeholder="Search by name or category…" class="grow">
+    <select id="cat"><option value="">All categories</option></select>
+    <input id="minP" type="number" min="0" placeholder="Min ₹"><input id="maxP" type="number" min="0" placeholder="Max ₹">
+    <select id="sort"><option value="createdAt,desc">Newest</option><option value="price,asc">Price: low → high</option><option value="price,desc">Price: high → low</option><option value="name,asc">Name A–Z</option><option value="rating,desc">Top rated</option></select>
+    <label class="check"><input id="low" type="checkbox"> Low stock</label></div>
+  <div id="grid" class="grid"></div><div id="pager" class="pager"></div></section>
+
+<section id="admin" hidden>
+  <div id="stats" class="stats"></div>
+  <div class="card"><div class="head"><h2>Categories</h2></div><div class="scroll"><table id="catTable"></table></div></div>
+  <div class="card"><div class="head"><h2>Products</h2><button class="btn primary" id="addBtn">+ Add product</button></div>
+    <div class="scroll"><table id="prodTable"></table></div><div id="apager" class="pager"></div></div>
+  <div class="card"><div class="head"><h2>Customer orders</h2></div><div class="scroll"><table id="ordTable"></table></div></div></section>
+<section id="orders" hidden><div class="head"><h2>My Orders</h2><button class="btn sm danger" id="clearOrders" hidden>Delete all orders</button></div><div id="orderList"></div></section>
+</main>
+
+<div class="modal" id="formModal" hidden><div class="dialog card"><h2 id="formTitle"></h2>
+  <div class="formgrid">
+    <label class="full">Name *<input id="fn"></label><label>Category *<input id="fc" list="catList"><datalist id="catList"></datalist></label>
+    <label>Brand<input id="fb"></label><label>Price *<input id="fp" type="number" min="0" step="0.01"></label>
+    <label>Stock *<input id="fs" type="number" min="0"></label><label>Rating (0–5)<input id="fr" type="number" min="0" max="5" step="0.1"></label>
+    <label>Image<input id="ff" type="file" accept="image/*"></label>
+    <label class="full">Image URL<input id="fi" placeholder="https://… (or upload above)"></label>
+    <div class="full preview"><img id="prev" alt=""><span class="muted" id="prevTxt">Image preview</span></div>
+    <label class="full">Description<textarea id="fd" rows="3"></textarea></label></div>
+  <p id="formErr" class="err"></p>
+  <div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" id="saveBtn">Save</button></div></div></div>
+<div class="modal" id="detailModal" hidden><div class="dialog card" id="detailBody"></div></div>
+<div class="modal" id="confirmModal" hidden><div class="dialog card small"><h2 id="confirmTitle">Delete product?</h2><p class="muted" id="confirmTxt"></p>
+  <div class="row end"><button class="btn" data-close>Cancel</button><button class="btn danger" id="confirmBtn">Delete</button></div></div></div>
+<div class="modal drawer-wrap" id="cartModal" hidden><aside class="drawer"><div class="head"><h2>Your cart</h2><button class="btn ghost" data-close>✕</button></div>
+  <div id="cartItems" class="grow"></div><div id="cartFoot"></div></aside></div>
+<div class="modal" id="checkoutModal" hidden><div class="dialog card"><h2>Checkout</h2>
+  <div class="formgrid"><label>Full name *<input id="ck_name"></label><label>Phone *<input id="ck_phone" placeholder="10-digit mobile"></label>
+    <label class="full">Delivery address *<textarea id="ck_addr" rows="2"></textarea></label></div>
+  <h3 class="sec">Payment method</h3>
+  <div class="pay"><label class="payopt"><input type="radio" name="pay" value="UPI" checked> UPI</label>
+    <label class="payopt"><input type="radio" name="pay" value="CARD"> Credit / Debit card</label>
+    <label class="payopt"><input type="radio" name="pay" value="COD"> Cash on delivery</label></div>
+  <div id="payUPI" class="payfields"><label>UPI ID<input id="ck_upi" placeholder="name@bank"></label></div>
+  <div id="payCARD" class="payfields formgrid" hidden><label class="full">Card number<input id="ck_card" inputmode="numeric" placeholder="1234 5678 9012 3456"></label>
+    <label>Expiry<input id="ck_exp" placeholder="MM/YY"></label><label>CVV<input id="ck_cvv" type="password" placeholder="•••"></label></div>
+  <div id="payCOD" class="payfields muted" hidden>Pay in cash when your order arrives.</div>
+  <div id="ckSummary" class="summary"></div><p id="ckErr" class="err"></p><p class="muted small">Demo checkout — no real payment is processed and card details are never sent or stored.</p>
+  <div class="row end"><button class="btn" data-close>Cancel</button><button class="btn primary" id="payBtn">Place order</button></div></div></div>
+<div class="modal" id="doneModal" hidden><div class="dialog card small center"><div class="tick">✓</div><h2>Order placed!</h2><p class="muted" id="doneTxt"></p>
+  <div class="row end"><button class="btn" data-close>Keep shopping</button><button class="btn primary" id="viewOrders" data-close>View orders</button></div></div></div>
+<div id="toasts"></div>
+<script src="app.js"></script></body></html>
